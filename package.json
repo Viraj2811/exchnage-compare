@@ -1,0 +1,13 @@
+{
+  "name": "exchange-price-compare",
+  "version": "1.0.0",
+  "description": "Compare live crypto prices across exchanges using real order books, with fees and slippage for your trade size.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test",
+    "check-live": "node scripts/check-exchanges.js"
+  },
+  "engines": { "node": ">=18" },
+  "license": "MIT"
+}

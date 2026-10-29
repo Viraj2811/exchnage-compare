@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: exchange-price-compare
+    runtime: node
+    plan: free
+    buildCommand: echo "no build step"
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: TRUST_PROXY
+        value: "1"

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crypto Exchange Price Comparison: Best Place to Buy or Sell Bitcoin</title>
+<meta name="description" content="Live crypto price comparison across Binance, Coinbase, Kraken and more. See which exchange gives you the most coins or money for your trade size, after fees and slippage.">
+<link rel="canonical" href="https://YOUR-DOMAIN.com/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Priceboard: where is crypto cheapest right now?">
+<meta property="og:description" content="Live order books from major exchanges, ranked for your trade size after fees and slippage.">
+<meta property="og:url" content="https://YOUR-DOMAIN.com/">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#0A0E14">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230A0E14'/%3E%3Cpath d='M6 22l6-8 5 4 9-11' fill='none' stroke='%2333E0A1' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Sora:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Which exchange has the best price for Bitcoin right now?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It changes every few seconds. This tool reads live order books from several exchanges and ranks them by how much you actually get for your amount, after trading fees."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does the price depend on how much I trade?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Each exchange has a stack of buy and sell orders at different prices. A larger order uses up the best orders and moves on to worse ones, so your average price gets worse. This is called slippage, and the tool calculates it from the real order book."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do some exchanges show USDT instead of USD?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Many global exchanges trade against the stablecoin USDT, which is usually worth about one US dollar but not exactly. Those rows are labeled with their quote currency so you can compare fairly."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are the fees correct for my account?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Fees are starting estimates for the lowest trading tier. Your own rate may be lower. Edit any fee in the Fee settings panel and the ranking updates instantly."
+      }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Priceboard Crypto Exchange Comparison",
+  "url": "https://YOUR-DOMAIN.com/",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+</head>
+<body>
+<header class="bar">
+  <div class="brand"><svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 23l7-9 5 4 10-12" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Priceboard</div>
+  <div class="live" id="live" role="status" aria-live="polite"><span class="dot" id="live-dot"></span><span id="live-text">Connecting…</span><button type="button" id="refresh" class="icon-btn" aria-label="Refresh prices now">↻</button></div>
+</header>
+
+<main class="wrap">
+  <h1>Where is crypto cheapest right now?</h1>
+  <p class="lede">Live order books from major exchanges, ranked for <em>your</em> trade size, after fees and slippage.</p>
+
+  <section class="controls" aria-label="Comparison settings">
+    <div class="ctl"><span class="lbl">Coin</span><div class="pills" id="coins" role="group" aria-label="Coin"></div></div>
+    <div class="ctl"><span class="lbl">Currency</span><div class="pills" id="curs" role="group" aria-label="Currency"></div></div>
+    <div class="ctl"><span class="lbl">I want to</span>
+      <div class="side" role="group" aria-label="Buy or sell">
+        <button type="button" id="side-buy" class="is-on" aria-pressed="true">Buy</button>
+        <button type="button" id="side-sell" aria-pressed="false">Sell</button>
+      </div></div>
+    <div class="ctl grow"><label class="lbl" for="amount" id="amount-label">Amount to spend</label>
+      <div class="amt"><input id="amount" type="text" inputmode="decimal" autocomplete="off"><b id="amount-unit"></b></div>
+      <div class="pills small" id="quick" aria-label="Quick amounts"></div></div>
+    <label class="switch"><input type="checkbox" id="feesOn" checked><span>Include trading fees</span></label>
+  </section>
+
+  <section id="summary" class="summary" aria-live="polite"></section>
+
+  <section class="board" aria-label="Exchange ranking">
+    <table id="table">
+      <thead><tr><th>#</th><th>Exchange</th><th class="num">Effective price</th><th class="num" id="th-out">You get</th><th class="num">Vs best</th><th class="num">Spread</th><th class="num">Fee</th><th></th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p class="hint" id="board-note"></p>
+  </section>
+
+  <details class="panel" id="fees-panel"><summary>Fee settings (edit to match your account)</summary>
+    <div class="fee-grid" id="fee-grid"></div>
+    <p class="hint">Fees are entry-tier taker rates. Rows marked "est." are unverified estimates. Your tier may be cheaper.</p>
+    <button type="button" class="link" id="fees-reset">Reset fees to defaults</button>
+  </details>
+</main>
+
+<section class="content">
+  <h2>How the comparison works</h2>
+  <p>Instead of showing a single headline price, Priceboard downloads each exchange's live order book, which is the list of real buy and sell orders. It then simulates your trade against those orders:</p>
+  <ol>
+    <li>Your order uses the best prices first and moves to worse ones as they run out.</li>
+    <li>The exchange's trading fee is taken off what you receive.</li>
+    <li>Exchanges are ranked by what you end up with, coins when buying or money when selling.</li>
+  </ol>
+  <p>Small orders mostly depend on the spread. Large orders depend on depth, so the best exchange can change as you change the amount.</p>
+  <h2>Frequently asked questions</h2>
+  <div class="faq">
+    <details><summary>Which exchange has the best price for Bitcoin right now?</summary><p>It changes every few seconds. This tool reads live order books from several exchanges and ranks them by how much you actually get for your amount, after trading fees.</p></details>
+    <details><summary>Why does the price depend on how much I trade?</summary><p>Each exchange has a stack of buy and sell orders at different prices. A larger order uses up the best orders and moves on to worse ones, so your average price gets worse. This is called slippage, and the tool calculates it from the real order book.</p></details>
+    <details><summary>Why do some exchanges show USDT instead of USD?</summary><p>Many global exchanges trade against the stablecoin USDT, which is usually worth about one US dollar but not exactly. Those rows are labeled with their quote currency so you can compare fairly.</p></details>
+    <details><summary>Are the fees correct for my account?</summary><p>Fees are starting estimates for the lowest trading tier. Your own rate may be lower. Edit any fee in the Fee settings panel and the ranking updates instantly.</p></details>
+  </div>
+</section>
+
+<footer class="foot">
+  <p><strong>Not financial advice.</strong> Data is read from public exchange APIs and can be delayed by a few seconds. Real trades can differ because of order type, fee tier, withdrawal costs and market moves. Always confirm the final amount on the exchange.</p>
+  <p><a href="disclaimer.html">Disclaimer and affiliate disclosure</a> · <a href="privacy.html">Privacy</a></p>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
